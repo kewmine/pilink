@@ -72,6 +72,7 @@ function launch_server() {
 
 
 # start checking
+setup_vps
 check_tools
 clone_repo
 setup_rustenv
