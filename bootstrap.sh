@@ -1,6 +1,6 @@
 #!/bin/bash
-
-wd=`pwd`
+# standalone install script to bootstrap entire service
+wd=`pwd`/pilink
 
 function panic() {
   echo -e "\n//--------------------\nPANICKING: $1"
@@ -10,8 +10,6 @@ function panic() {
 function success() {
   echo -e "[*] $1"
 }
-
-
 
 # check if all the necessary tools are installed
 function check_tools(){
@@ -28,6 +26,12 @@ function check_tools(){
           exit 1
   fi
   success "checked all the necessary tools"
+}
+
+function clone_repo(){
+  repo="https://github.com/kewmine/pilink"
+  git clone $repo &> /dev/null && cd pilink|| panic "something went wrong trying to clone the repo"
+  success "cloned the repo"
 }
 
 function setup_rustenv(){
@@ -58,12 +62,13 @@ function bind_front_and_back() {
 
 function launch_server() {
   success "launching actix server | logs at $wd/actix.log"
-  cd ./actix_backend && cargo run &> $wd/actix.log
+  cd ./actix_backend && cargo run &> $wd/actix_backend/actix.log
 }
 
 
 # start checking
 check_tools
+clone_repo
 setup_rustenv
 build_frontend
 bind_front_and_back
