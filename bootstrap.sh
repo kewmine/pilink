@@ -11,19 +11,24 @@ function success() {
   echo -e "[*] $1"
 }
 
+function setup_vps() {
+  sudo bash -c "apt-get clean && dpkg --configure -a && apt-get update && apt-get purge man-db && apt-get upgrade" &> /dev/null || panic "failed to update vps"
+}
+
 # check if all the necessary tools are installed
 function check_tools(){
-  required_tools=("git" "pnpm" "rustup" "cargo")
 
+  # make an array of missing tools
+  required_tools=("git" "pnpm" "rustup")
   for tool in ${required_tools[@]}
   do
     which $tool &> /dev/null || missing_tools+=("$tool")
   done
 
+  # install missing tools
   if [ ${#missing_tools[@]} -ne 0 ]
   then
-          echo -e "you must install the following before continuing:\n\t${missing_tools[@]}"
-          exit 1
+    apt-get install "${missing_tools[@]}" &> /dev/null || panic "failed to install missing tools"
   fi
   success "checked all the necessary tools"
 }
