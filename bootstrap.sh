@@ -38,6 +38,7 @@ function setup_rustenv(){
 
 function build_frontend() {
   cd $wd/svelte_frontend &> /dev/null || panic "svelte_frontend directory not found"
+  pnpm update &> /dev/null || panic "failed to update pnpm environment"
   pnpm build &> /dev/null || panic "failed to build frontend"
   success "built frontend"
 }
