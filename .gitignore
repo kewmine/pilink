@@ -1,0 +1,9 @@
+.svelte-kit
+.turbo
+.idea
+actix.log
+Architecture.toml
+build
+node_modules
+target
+webpages
