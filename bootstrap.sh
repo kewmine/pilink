@@ -28,7 +28,7 @@ function check_tools(){
   # install missing tools
   if [ ${#missing_tools[@]} -ne 0 ]
   then
-    apt-get install "${missing_tools[@]}" &> /dev/null || panic "failed to install missing tools"
+    sudo apt-get install "${missing_tools[@]}" &> /dev/null || panic "failed to install missing tools"
   fi
   success "checked all the necessary tools"
 }
