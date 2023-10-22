@@ -24,12 +24,10 @@ function check_tools(){
     which $tool &> /dev/null || missing_tools+=("$tool")
   done
 
-  echo "${missing_tools[*]}"
-
   # install git if not found
   if [[ $(echo ${missing_tools[*]} | grep -Fw "git") ]]; then
       echo " - installing git"
-      apt install -y git &> /dev/null || panic "error while trying to install git"
+      sudo apt-get install -y git &> /dev/null || panic "error while trying to install git"
   fi
 
   # install rustup if not found
