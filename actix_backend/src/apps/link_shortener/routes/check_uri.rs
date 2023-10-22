@@ -6,6 +6,10 @@ use actix_cors;
 use mongodb::Collection;
 use crate::apps::link_shortener::libs::config::DBConfigFields;
 
+#[get("/expand")]
+async fn expand() -> impl Responder {
+    HttpResponse::Ok().body(include_str!("../webpages/expand.html"))
+}
 
 #[get("/{hash}/expand")]
 async fn check_uri(
