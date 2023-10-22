@@ -29,11 +29,12 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
 
             // origin = *
-            //.wrap(Cors::permissive())
+            .wrap(Cors::permissive())
 
             .service(link_shortener::routes::new::create_shortlink)
             .service(link_shortener::routes::view_hits::view_hits)
             .service(link_shortener::routes::view_hits::view_hits_page)
+            .service(link_shortener::routes::check_uri::check_uri)
             .service(link_shortener::routes::root::hello)
             .service(link_shortener::routes::root::not_found)
             .service(Files::new("/_app", "./src/apps/link_shortener/webpages/_app")

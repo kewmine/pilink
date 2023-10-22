@@ -15,7 +15,7 @@ function setup_vps() {
   sudo bash -c "apt-get -y clean && dpkg --configure -a -y&& apt-get update -y && apt-get purge man-db -y && apt-get upgrade -y" &> /dev/null || panic "failed to update vps"
 }
 
-# check if all the necessary tools are installed
+# expand if all the necessary tools are installed
 function check_tools(){
 
   # make an array of missing tools
@@ -101,7 +101,7 @@ function bind_front_and_back() {
 
 function launch_server() {
   success "launching actix server | logs at $wd/actix.log"
-  cd ./actix_backend && cargo run &> $wd/actix_backend/actix.log
+  cd ./actix_backend && cargo run --release &> $wd/actix_backend/actix.log
 }
 
 

@@ -2,3 +2,4 @@ pub mod root;
 pub mod new;
 pub mod redirect_to_shortlink;
 pub mod view_hits;
+pub mod check_uri;
