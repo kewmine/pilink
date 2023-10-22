@@ -12,36 +12,51 @@ function success() {
 }
 
 function setup_vps() {
-  sudo bash -c "apt-get clean && dpkg --configure -a && apt-get update && apt-get purge man-db && apt-get upgrade" &> /dev/null || panic "failed to update vps"
+  sudo bash -c "apt-get -y clean && dpkg --configure -a -y&& apt-get update -y && apt-get purge man-db -y && apt-get upgrade -y" &> /dev/null || panic "failed to update vps"
 }
 
 # check if all the necessary tools are installed
 function check_tools(){
 
   # make an array of missing tools
-  required_tools=("git" "pnpm" "rustup")
-  for tool in ${required_tools[@]}
-  do
+  required_tools=("git" "pnpm" "rustup" "tool2" "tool3")
+  for tool in ${required_tools[*]}; do
     which $tool &> /dev/null || missing_tools+=("$tool")
   done
 
-  # install missing tools
-  if [ ${#missing_tools[@]} -ne 0 ]
-  then
-    sudo apt-get install "${missing_tools[@]}" &> /dev/null || panic "failed to install missing tools"
+  echo "${missing_tools[*]}"
+
+  # install git if not found
+  if [[ $(echo ${missing_tools[*]} | grep -Fw "git") ]]; then
+      apt install -y git &> /dev/null || panic "error while trying to install git"
   fi
+
+  # install rustup if not found
+  if [[ $(echo ${missing_tools[*]} | grep -Fw "rustup") ]]; then
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o /tmp/install_rustup.sh
+    sh /tmp/install_rustup.sh &> /dev/null || panic "error while trying to install rustup"
+  fi
+
+  # install pnpm if not found
+  if [[ $(echo ${missing_tools[*]} | grep -Fw "pnpm") ]]; then
+    curl -fsSL https://get.pnpm.io/install.sh | sh - &> /dev/null || panic "error while trying to instlal pnpm"
+  fi
+
+  # update env
+  source $HOME/.bashrc
+
   success "checked all the necessary tools"
 }
 
 function clone_repo(){
   repo="https://github.com/kewmine/pilink"
-  git clone $repo &> /dev/null && cd pilink|| panic "something went wrong trying to clone the repo"
+  git clone $repo &> /dev/null && cd pilink|| panic "error while trying to clone the repo"
   success "cloned the repo"
 }
 
 function setup_rustenv(){
-  rustup default nightly &> /dev/null || panic "something went wrong trying to setup rust nightly"
-  rustup update &> /dev/null || panic "something went wrong trying to update rust"
+  rustup default nightly &> /dev/null || panic "error while trying to setup rust nightly"
+  rustup update &> /dev/null || panic "error while trying to update rust"
   success "rust nightly updated"
 }
 
@@ -61,7 +76,7 @@ function build_backend() {
 
 function bind_front_and_back() {
   cd $wd
-  ln -s "$(realpath ./svelte_frontend/build)" "$(realpath ./actix_backend/src/apps/link_shortener/webpages)" || panic "something went wrong while trying to bind frontend and backend"
+  ln -s "$(realpath ./svelte_frontend/build)" "$(realpath ./actix_backend/src/apps/link_shortener/webpages)" || panic "error while trying to bind frontend and backend"
   success "bound frontend and backend"
 }
 
@@ -72,10 +87,9 @@ function launch_server() {
 
 
 # start checking
-setup_vps
 check_tools
-clone_repo
-setup_rustenv
-build_frontend
-bind_front_and_back
-launch_server
+#clone_repo
+#setup_rustenv
+#build_frontend
+#bind_front_and_back
+#launch_server
