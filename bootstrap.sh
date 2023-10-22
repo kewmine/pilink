@@ -28,24 +28,27 @@ function check_tools(){
 
   # install git if not found
   if [[ $(echo ${missing_tools[*]} | grep -Fw "git") ]]; then
+      echo " - installing git"
       apt install -y git &> /dev/null || panic "error while trying to install git"
   fi
 
   # install rustup if not found
   if [[ $(echo ${missing_tools[*]} | grep -Fw "rustup") ]]; then
+    echo " - installing rustup"
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o /tmp/install_rustup.sh
     sh /tmp/install_rustup.sh &> /dev/null || panic "error while trying to install rustup"
   fi
 
   # install pnpm if not found
   if [[ $(echo ${missing_tools[*]} | grep -Fw "pnpm") ]]; then
+    echo " - installing pnpm"
     curl -fsSL https://get.pnpm.io/install.sh | sh - &> /dev/null || panic "error while trying to instlal pnpm"
   fi
 
   # update env
   source $HOME/.bashrc
 
-  success "checked all the necessary tools"
+  success "all the necessary tools are available"
 }
 
 function clone_repo(){
@@ -88,8 +91,8 @@ function launch_server() {
 
 # start checking
 check_tools
-#clone_repo
-#setup_rustenv
-#build_frontend
-#bind_front_and_back
-#launch_server
+clone_repo
+setup_rustenv
+build_frontend
+bind_front_and_back
+launch_server
