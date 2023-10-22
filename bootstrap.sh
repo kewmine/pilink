@@ -19,7 +19,7 @@ function setup_vps() {
 function check_tools(){
 
   # make an array of missing tools
-  required_tools=("git" "pnpm" "rustup" "tool2" "tool3")
+  required_tools=("git" "pnpm" "rustup" "node" "tool3")
   for tool in ${required_tools[*]}; do
     which $tool &> /dev/null || missing_tools+=("$tool")
   done
@@ -29,6 +29,24 @@ function check_tools(){
       echo " - installing git"
       sudo apt-get install -y git &> /dev/null || panic "error while trying to install git"
   fi
+
+  # install node if not found
+    if [[ $(echo ${missing_tools[*]} | grep -Fw "node") ]]; then
+      echo " - installing node"
+      sudo apt-get update -y &> /dev/null
+      sudo apt-get install -y ca-certificates curl gnupg &> /dev/null
+      sudo mkdir -p /etc/apt/keyrings &> /dev/null
+      curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg &> /dev/null || panic "error while trying to setup node keyring"
+
+      NODE_MAJOR=20
+      echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list || panic "error while trying to setup node sources"
+
+      sudo apt-get install -y nodejs &> /dev/null || panic "error while trying to install nodejs"
+
+
+
+      curl -fsSL https://get.pnpm.io/install.sh | sh - &> /dev/null || panic "error while trying to install pnpm"
+    fi
 
   # install rustup if not found
   if [[ $(echo ${missing_tools[*]} | grep -Fw "rustup") ]]; then
